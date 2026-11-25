@@ -395,10 +395,31 @@
               }
             },
             {
+              "name": "[REQUISITOS-02] Por estado",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8080/api/v1/pedidos?estado=PENDIENTE"
+              }
+            },
+            {
+              "name": "[REQUISITOS-02] Estado y fecha",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8080/api/v1/pedidos?estado=PENDIENTE&fecha=2026-10-03"
+              }
+            },
+            {
               "name": "[ERROR 400] Fecha mal escrita",
               "request": {
                 "method": "GET",
                 "url": "http://localhost:8080/api/v1/pedidos?fecha=ayer"
+              }
+            },
+            {
+              "name": "[ERROR 400] Estado que no existe",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8080/api/v1/pedidos?estado=frio"
               }
             }
           ]

@@ -1,6 +1,7 @@
 package es.safareyes.coffestation.Modelo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 // necesita entidad propia porque, además de las dos FK, guarda la cantidad y el precio del momento.
 @Entity
 @Table(name = "producto_pedido", schema = "coffestation")
-@Getter@Setter@NoArgsConstructor
+@Getter@Setter@NoArgsConstructor@AllArgsConstructor
 
 
 public class ProductoPedido {

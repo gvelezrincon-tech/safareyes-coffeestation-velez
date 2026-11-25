@@ -10,5 +10,17 @@ public enum EstadoPedido {
     EN_PREPARACION,
     LISTO,
     ENTREGADO,
-    CANCELADO
+    CANCELADO;
+
+    // RN-08: ¿se puede pasar de este estado al nuevo?
+    // cada estado solo tiene un siguiente posible (PENDIENTE tiene dos).
+    // ENTREGADO y CANCELADO son finales: de ahí ya no se mueve el pedido
+    public boolean puedeCambiarA(EstadoPedido nuevo) {
+        return switch (this) {
+            case PENDIENTE -> nuevo == EN_PREPARACION || nuevo == CANCELADO;
+            case EN_PREPARACION -> nuevo == LISTO;
+            case LISTO -> nuevo == ENTREGADO;
+            case ENTREGADO, CANCELADO -> false;
+        };
+    }
 }

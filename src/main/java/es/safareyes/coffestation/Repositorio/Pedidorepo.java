@@ -1,5 +1,6 @@
 package es.safareyes.coffestation.Repositorio;
 
+import es.safareyes.coffestation.Modelo.EstadoPedido;
 import es.safareyes.coffestation.Modelo.Pedido;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,17 @@ public interface Pedidorepo extends JpaRepository<Pedido, Long> {
     @Override
     @EntityGraph(attributePaths = {"cliente"})
     Page<Pedido> findAll(Pageable pageable);
+
+    // GET /api/v1/pedidos?estado= (endpoint 11)
+    // pedidos paginados de un estado (p. ej. los PENDIENTE que tiene que preparar el barista)
+    @EntityGraph(attributePaths = {"cliente"})
+    Page<Pedido> findByEstado(EstadoPedido estado, Pageable pageable);
+
+    // GET /api/v1/pedidos?estado=&fecha= (endpoint 11)
+    // pedidos paginados de un estado y un día a la vez
+    @EntityGraph(attributePaths = {"cliente"})
+    Page<Pedido> findByEstadoAndFechaHoraBetween(EstadoPedido estado, LocalDateTime desde,
+                                                 LocalDateTime hasta, Pageable pageable);
 
     // GET /api/v1/informes/ventas-dia?fecha=
     // ventas entre dos momentos (devuelve una sola fila)
