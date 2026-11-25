@@ -6,7 +6,9 @@ import es.safareyes.coffestation.Modelo.TipoCupon;
 import es.safareyes.coffestation.Repositorio.Clienterepo;
 import es.safareyes.coffestation.Repositorio.Cuponesrepo;
 import es.safareyes.coffestation.dto.request.CuponRequest;
+import es.safareyes.coffestation.dto.request.ValidarCuponRequest;
 import es.safareyes.coffestation.dto.response.CuponResponse;
+import es.safareyes.coffestation.dto.response.ValidarCuponResponse;
 import es.safareyes.coffestation.exception.RecursoDuplicadoException;
 import es.safareyes.coffestation.exception.RecursoNoEncontradoException;
 import es.safareyes.coffestation.exception.ReglaNegocioException;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 // lógica de los cupones
 @Slf4j
@@ -72,5 +75,70 @@ public class CuponServiceImpl implements CuponService {
         Cupones guardado = cuponesrepo.save(cupon);
         log.info("Cupón {} creado con id {}", codigo, guardado.getId());
         return cuponMapper.toResponse(guardado);
+    }
+
+
+    // endpoint 14 - POST /api/v1/cupones/validar
+    // url: http://localhost:8080/api/v1/cupones/validar   cuerpo: { "codigo": "BIENVENIDA10", "subtotal": 12.50 }
+    //
+    // aquí un cupón que no vale NO es un error: la pregunta "¿vale?" se responde siempre con 200,
+    // y en la respuesta va valido = true/false y un mensaje diciendo por qué.
+    //
+    // RN-06: un cupón vale si...
+    //   1. existe                                     -> hecho
+    //   2. está activo                                -> hecho
+    //   3. hoy está dentro de sus fechas              -> hecho
+    //   4. no ha llegado a sus usos máximos           -> TODO
+    //   5. el subtotal supera su importe mínimo       -> TODO
+    //   6. si es personal, el email es el del cliente -> TODO (fase 4, hace falta saber quién está logueado)
+    // y si vale, hay que calcular el descuento        -> TODO
+    @Override
+    @Transactional(readOnly = true)
+    public ValidarCuponResponse validar(ValidarCuponRequest request) {
+        String codigo = request.codigo().trim().toUpperCase();
+        log.info("Validar cupón {} para un subtotal de {}", codigo, request.subtotal());
+
+        // 1. existe
+        Cupones cupon = cuponesrepo.findByCodigoIgnoreCase(codigo).orElse(null);
+        if (cupon == null) {
+            return noValido("No existe ningún cupón con el código " + codigo);
+        }
+
+        // 2. está activo
+        if (!cupon.getActivo()) {
+            return noValido("El cupón " + codigo + " está desactivado");
+        }
+
+        // 3. hoy está dentro de sus fechas (ni antes de empezar ni después de acabar)
+        LocalDateTime ahora = LocalDateTime.now();
+        if (ahora.isBefore(cupon.getFechaInicio())) {
+            return noValido("El cupón " + codigo + " todavía no ha empezado (empieza el "
+                    + cupon.getFechaInicio().toLocalDate() + ")");
+        }
+        if (ahora.isAfter(cupon.getFechaFin())) {
+            return noValido("El cupón " + codigo + " está caducado (acabó el "
+                    + cupon.getFechaFin().toLocalDate() + ")");
+        }
+
+        // TODO 4. usos máximos: contar las filas del cupón en pedido_cupones SIN contar los pedidos
+        //  CANCELADO (RN-08: cancelar devuelve el uso). hace falta una consulta nueva en PedidoCuponesrepo
+
+        // TODO 5. importe mínimo: si el cupón tiene importeMinimo (puede ser null),
+        //  el subtotal tiene que ser MAYOR (no igual) que él
+
+        // TODO 6. cupón personal: si cupon.getCliente() no es null, comparar su email con el del
+        //  cliente que hace la petición. eso se sabe con el JWT, así que se queda para la fase 4
+
+        // TODO descuento: PORCENTAJE -> subtotal * valor / 100; IMPORTE_FIJO -> valor.
+        //  redondeado a 2 decimales y nunca más grande que el subtotal (RN-07: el total no puede ser negativo)
+        BigDecimal descuento = BigDecimal.ZERO;
+
+        return new ValidarCuponResponse(true, "Cupón válido", descuento);
+    }
+
+    // respuesta de "este cupón no vale": sin descuento y con el motivo
+    private ValidarCuponResponse noValido(String motivo) {
+        log.info("Cupón no válido: {}", motivo);
+        return new ValidarCuponResponse(false, motivo, BigDecimal.ZERO);
     }
 }
