@@ -693,6 +693,181 @@
               }
             }
           ]
+        },
+        {
+          "name": "14. POST /cupones/validar",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Cupón de porcentaje válido",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"OTONO15\",\n  \"subtotal\": 12.35,\n  \"email\": \"carmen.ruiz@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] Cupón de importe fijo válido",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"CAFE1EURO\",\n  \"subtotal\": 12.5,\n  \"email\": \"luis.garcia@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] No existe",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"NOEXISTE\",\n  \"subtotal\": 10.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Caducado",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"VERANO20\",\n  \"subtotal\": 10.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Todavía no ha empezado",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"NAVIDAD2\",\n  \"subtotal\": 10.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Sin usos disponibles",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"BIENVENIDA10\",\n  \"subtotal\": 12.5,\n  \"email\": \"ana.lopez@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Subtotal igual al importe mínimo",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"CAFE1EURO\",\n  \"subtotal\": 3.0,\n  \"email\": \"luis.garcia@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Cupón personal de otro cliente",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"CAFE1EURO\",\n  \"subtotal\": 12.5,\n  \"email\": \"ana.lopez@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-07] Descuento mayor que el subtotal",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"DESAYUNO05\",\n  \"subtotal\": 0.3,\n  \"email\": \"lucia.navarro@correo.es\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Faltan datos o están mal",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subtotal\": -1,\n  \"email\": \"no-es-un-email\"\n}"
+                }
+              }
+            }
+          ]
         }
       ]
     }

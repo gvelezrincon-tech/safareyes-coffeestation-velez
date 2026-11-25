@@ -2,9 +2,11 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.Modelo.Cliente;
 import es.safareyes.coffestation.Modelo.Cupones;
+import es.safareyes.coffestation.Modelo.EstadoPedido;
 import es.safareyes.coffestation.Modelo.TipoCupon;
 import es.safareyes.coffestation.Repositorio.Clienterepo;
 import es.safareyes.coffestation.Repositorio.Cuponesrepo;
+import es.safareyes.coffestation.Repositorio.PedidoCuponesrepo;
 import es.safareyes.coffestation.dto.request.CuponRequest;
 import es.safareyes.coffestation.dto.request.ValidarCuponRequest;
 import es.safareyes.coffestation.dto.response.CuponResponse;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 // lógica de los cupones
@@ -28,6 +31,7 @@ import java.time.LocalDateTime;
 public class CuponServiceImpl implements CuponService {
 
     private final Cuponesrepo cuponesrepo;
+    private final PedidoCuponesrepo pedidoCuponesrepo;
     private final Clienterepo clienterepo;
     private final CuponMapper cuponMapper;
 
@@ -85,13 +89,14 @@ public class CuponServiceImpl implements CuponService {
     // y en la respuesta va valido = true/false y un mensaje diciendo por qué.
     //
     // RN-06: un cupón vale si...
-    //   1. existe                                     -> hecho
-    //   2. está activo                                -> hecho
-    //   3. hoy está dentro de sus fechas              -> hecho
-    //   4. no ha llegado a sus usos máximos           -> TODO
-    //   5. el subtotal supera su importe mínimo       -> TODO
-    //   6. si es personal, el email es el del cliente -> TODO (fase 4, hace falta saber quién está logueado)
-    // y si vale, hay que calcular el descuento        -> TODO
+    //   1. existe
+    //   2. está activo
+    //   3. hoy está dentro de sus fechas
+    //   4. no ha llegado a sus usos máximos
+    //   5. el subtotal supera su importe mínimo
+    //   6. si es personal, el email es el del cliente
+    // se comprueban en ese orden y en cuanto una falla se responde con el motivo.
+    // si pasa las 6, se calcula el descuento
     @Override
     @Transactional(readOnly = true)
     public ValidarCuponResponse validar(ValidarCuponRequest request) {
@@ -120,20 +125,50 @@ public class CuponServiceImpl implements CuponService {
                     + cupon.getFechaFin().toLocalDate() + ")");
         }
 
-        // TODO 4. usos máximos: contar las filas del cupón en pedido_cupones SIN contar los pedidos
-        //  CANCELADO (RN-08: cancelar devuelve el uso). hace falta una consulta nueva en PedidoCuponesrepo
+        // 4. no ha llegado a sus usos máximos.
+        // los usos son sus filas en pedido_cupones, pero sin contar los pedidos CANCELADO
+        // (RN-08: cancelar un pedido le devuelve el uso al cupón)
+        long usos = pedidoCuponesrepo.countByCuponIdAndPedidoEstadoNot(cupon.getId(), EstadoPedido.CANCELADO);
+        if (usos >= cupon.getMaxUsos()) {
+            return noValido("El cupón " + codigo + " ya ha llegado a su máximo de usos ("
+                    + cupon.getMaxUsos() + ")");
+        }
 
-        // TODO 5. importe mínimo: si el cupón tiene importeMinimo (puede ser null),
-        //  el subtotal tiene que ser MAYOR (no igual) que él
+        // 5. el subtotal SUPERA el importe mínimo (si es igual, no vale).
+        // importeMinimo es opcional: si es null, el cupón vale para cualquier importe
+        if (cupon.getImporteMinimo() != null && request.subtotal().compareTo(cupon.getImporteMinimo()) <= 0) {
+            return noValido("El cupón " + codigo + " solo vale para pedidos de más de "
+                    + cupon.getImporteMinimo() + " €");
+        }
 
-        // TODO 6. cupón personal: si cupon.getCliente() no es null, comparar su email con el del
-        //  cliente que hace la petición. eso se sabe con el JWT, así que se queda para la fase 4
+        // 6. si el cupón es personal, solo lo puede usar su cliente (se comparan los emails).
+        // de momento el email llega en la petición; en la fase 4 un CLIENTE lo sacará de su token
+        // ojo: cupon.getCliente() es LAZY, pero estamos dentro de la transacción y se carga sin problema
+        if (cupon.getCliente() != null) {
+            String emailCupon = cupon.getCliente().getEmail();
+            if (request.email() == null || !emailCupon.equalsIgnoreCase(request.email().trim())) {
+                return noValido("El cupón " + codigo + " es personal y no pertenece a este cliente");
+            }
+        }
 
-        // TODO descuento: PORCENTAJE -> subtotal * valor / 100; IMPORTE_FIJO -> valor.
-        //  redondeado a 2 decimales y nunca más grande que el subtotal (RN-07: el total no puede ser negativo)
-        BigDecimal descuento = BigDecimal.ZERO;
-
+        // ha pasado todo: el cupón vale. calculamos cuánto descuenta
+        BigDecimal descuento = calcularDescuento(cupon, request.subtotal());
+        log.info("Cupón {} válido: descuenta {} €", codigo, descuento);
         return new ValidarCuponResponse(true, "Cupón válido", descuento);
+    }
+
+    // cuánto descuenta un cupón sobre un subtotal:
+    //   PORCENTAJE   -> subtotal * valor / 100   (10 % de 12,50 = 1,25)
+    //   IMPORTE_FIJO -> el valor tal cual        (1 € = 1,00)
+    // redondeado a 2 decimales (HALF_UP = el redondeo de toda la vida: 0,125 -> 0,13).
+    // nunca más que el subtotal: un cupón de 5 € en un pedido de 3 € descuenta 3 €,
+    // así el total no se queda en negativo (RN-07).
+    // TODO endpoint 9: al crear el pedido se puede reutilizar este cálculo
+    private BigDecimal calcularDescuento(Cupones cupon, BigDecimal subtotal) {
+        BigDecimal descuento = (cupon.getTipo() == TipoCupon.PORCENTAJE)
+                ? subtotal.multiply(cupon.getValor()).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP)
+                : cupon.getValor().setScale(2, RoundingMode.HALF_UP);
+        return descuento.min(subtotal);
     }
 
     // respuesta de "este cupón no vale": sin descuento y con el motivo

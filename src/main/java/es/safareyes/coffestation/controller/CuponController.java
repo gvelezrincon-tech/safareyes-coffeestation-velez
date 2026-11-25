@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-// endpoints de los cupones: 13 y 14 (este último a medio hacer)
+// endpoints de los cupones: 13 y 14
 //
 // roles (fase 4):
 //   POST /cupones         -> ADMIN
@@ -50,7 +50,7 @@ public class CuponController {
     // cuerpo: { "codigo": "BIENVENIDA10", "subtotal": 12.50 }
     // 200 siempre que la petición esté bien escrita: si el cupón no vale, valido = false y el motivo.
     // 400 si falta el código o el subtotal (o es negativo)
-    // OJO: a medio hacer, mirar los TODO de CuponServiceImpl.validar
+    // "email" es opcional: solo cuenta si el cupón es personal
     @PostMapping("/validar")
     public ValidarCuponResponse validar(@Valid @RequestBody ValidarCuponRequest request) {
         log.info("POST /cupones/validar");
