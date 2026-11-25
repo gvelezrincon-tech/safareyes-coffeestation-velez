@@ -147,8 +147,10 @@ public class ProductoServiceImpl implements ProductoService {
     // url: http://localhost:8080/api/v1/productos/21
     //
     // RN-01: no se borra la fila, solo se pone activo = false.
-    // si la borráramos, los pedidos antiguos que llevan este producto se quedarían sin él
-    // (y la FK de producto_pedido ni siquiera nos dejaría). así deja de salir en la carta
+    //tengo que mirar si funciona bien ya o no
+
+    // si la quitase, los pedidos antiguos que llevan este producto se quedarían sin él
+    // (y la FK de producto_pedido ni siquiera nos dejaría). así deja de sali en la carta
     // y no se puede pedir, pero los pedidos viejos lo siguen enseñando.
     // (sin save(), igual que en el 4 y el 5)
     @Override
@@ -163,7 +165,7 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
 
-    // métodos de ayuda en verda no hacen falta pero queria tenerlos
+    // métodos de ayuda en verda no hacen falta pero venia bien tenerlos por
 
     // busca un producto para cambiarlo: 404 si no existe, 422 si está de baja (RN-01)
     private Producto buscarProductoActivo(Long id) {

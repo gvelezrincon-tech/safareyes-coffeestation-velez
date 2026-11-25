@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -54,5 +55,20 @@ public interface Productorepo extends JpaRepository<Producto, Long>, JpaSpecific
 
     // EXTRA: productos agotados
     List<Producto> findByDisponibleFalse();
+
+    // PATCH /api/v1/categorias/{id}/disponibilidad (endpoint 8, consulta Q4)
+    // agota o repone de golpe todos los productos activos de una categoría con un solo update,
+    // en vez de ir cargando y cambiando producto a producto. devuelve cuántas filas ha cambiado.
+    //
+    // @Modifying: le dice a Spring que esto no es un select sino un update.
+    // flushAutomatically = true: antes del update guarda en la bd los cambios pendientes
+    //   (en el servicio ya hemos cambiado la categoría y no queremos perderlo).
+    // clearAutomatically = true: después del update vacía la caché de Hibernate, porque el
+    //   update va directo a la bd y si no Hibernate seguiría viendo los productos con el valor viejo
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Producto p set p.disponible = :valor " +
+            "where p.categoria.id = :categoriaId and p.activo = true")
+    int cambiarDisponibilidadDeCategoria(@Param("categoriaId") Long categoriaId,
+                                         @Param("valor") Boolean valor);
 
 }
