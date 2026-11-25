@@ -14,6 +14,7 @@ public record CuponResponse(
         LocalDateTime fechaFin,
         Long maxUsos,
         BigDecimal importeMinimo,
+        Boolean activo,
         String emailCliente
 ) {
 }

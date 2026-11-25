@@ -40,6 +40,15 @@ public class GlobalExceptionHandler {
         return problema;
     }
 
+    // 409: lo que se quiere crear ya existe (código de cupón repetido...)
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    public ProblemDetail manejarDuplicado(RecursoDuplicadoException ex) {
+        log.warn("409 - {}", ex.getMessage());
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problema.setTitle("Recurso duplicado");
+        return problema;
+    }
+
     // 422: la petición está bien escrita pero se salta una regla de negocio
     @ExceptionHandler(ReglaNegocioException.class)
     public ProblemDetail manejarReglaNegocio(ReglaNegocioException ex) {

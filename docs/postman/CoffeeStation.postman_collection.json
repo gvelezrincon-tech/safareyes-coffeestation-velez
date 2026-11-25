@@ -423,6 +423,276 @@
               }
             }
           ]
+        },
+        {
+          "name": "12. PATCH /pedidos/{id}/estado",
+          "item": [
+            {
+              "name": "[PRINCIPAL] PENDIENTE a EN_PREPARACION",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"EN_PREPARACION\"}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] EN_PREPARACION a LISTO",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"LISTO\"}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] LISTO a ENTREGADO",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"ENTREGADO\"}"
+                }
+              }
+            },
+            {
+              "name": "[RN-08] Cancelar un pedido PENDIENTE",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/11/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"CANCELADO\"}"
+                }
+              }
+            },
+            {
+              "name": "[RN-08] Salto no permitido da 422",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"PENDIENTE\"}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Estado que no existe",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"FRIO\"}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 404] No existe",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8080/api/v1/pedidos/9999/estado",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"estado\": \"LISTO\"}"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cupones",
+      "item": [
+        {
+          "name": "13. POST /cupones",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Crear cupón para todos (201 + Location)",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"MERIENDA10\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] Crear cupón personal de un cliente",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"ANA-2EUROS\",\n  \"tipo\": \"IMPORTE_FIJO\",\n  \"valor\": 2.0,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 1,\n  \"clienteId\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Faltan datos y tipo no válido",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"\",\n  \"tipo\": \"REGALO\",\n  \"valor\": 0\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Código con formato no válido (validador propio)",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"CAFÉ 1\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 409] Código repetido",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"bienvenida10\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 404] Cliente no existe",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"FANTASMA1\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0,\n  \"clienteId\": 9999\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 422] Fecha de fin antes que la de inicio",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"AL-REVES\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2026-12-31T00:00:00\",\n  \"fechaFin\": \"2026-12-01T00:00:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 422] Porcentaje de más del 100",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8080/api/v1/cupones",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"GRATIS150\",\n  \"tipo\": \"PORCENTAJE\",\n  \"valor\": 150,\n  \"fechaInicio\": \"2026-11-25T00:00:00\",\n  \"fechaFin\": \"2026-12-31T23:59:00\",\n  \"maxUsos\": 50,\n  \"importeMinimo\": 3.0\n}"
+                }
+              }
+            }
+          ]
         }
       ]
     }

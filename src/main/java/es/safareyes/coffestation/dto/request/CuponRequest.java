@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import es.safareyes.coffestation.validation.CodigoCupon;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 // lo que llega al crear un cupón (POST /cupones, solo ADMIN)
 public record CuponRequest(
 
+        // @CodigoCupon es nuestro validador propio (paquete validation): longitud y formato
         @NotBlank(message = "El código es obligatorio")
-        @Size(max = 20, message = "El código no puede pasar de 20 caracteres")
+        @CodigoCupon
         String codigo,
 
         @NotBlank(message = "El tipo es obligatorio")

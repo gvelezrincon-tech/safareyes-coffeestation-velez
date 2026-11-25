@@ -25,8 +25,9 @@ public class Cupones {
     @Column (name = "codigo")
     private String codigo;
 
+    @Enumerated(EnumType.STRING)
     @Column (name = "tipo")
-    private String tipo;
+    private TipoCupon tipo;
 
     @Column (name = "valor")
     private BigDecimal valor;
@@ -43,7 +44,11 @@ public class Cupones {
     @Column (name = "importe_minimo")
     private BigDecimal importeMinimo;
 
-    // lado con la FK (Cupones → Cliente)
+    // RN-06: un cupón desactivado ya no vale aunque esté en fechas
+    @Column (name = "activo")
+    private Boolean activo;
+
+    // lado con la FK (Cupones → Cliente). opcional: si es null, el cupón vale para cualquiera
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;

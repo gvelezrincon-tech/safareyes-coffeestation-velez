@@ -80,8 +80,10 @@ create table "cupones" (
     "fecha_fin" timestamp(0) without time zone not null,
     "max_usos" bigint not null,
     "importe_minimo" decimal(10,2),
+    "activo" boolean not null default true,
 
-    "cliente_id" bigint not null,
+    -- opcional: si tiene cliente, el cupón es personal y solo lo puede usar él (RN-06)
+    "cliente_id" bigint,
 
     primary key ("id"),
 
@@ -91,9 +93,13 @@ create table "cupones" (
         references "cliente"("id"),
 
     check ("tipo" in (
-        'porcentaje',
-        'importe'
-    ))
+        'PORCENTAJE',
+        'IMPORTE_FIJO'
+    )),
+
+    check ("valor" > 0),
+    check ("max_usos" >= 1),
+    check ("fecha_fin" > "fecha_inicio")
 );
 
 create table "pedido" (
