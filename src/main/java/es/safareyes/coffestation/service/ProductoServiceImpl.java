@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-// aquí está toda la lógica de los productos (endpoints 1 a 5)
+// aquí está toda la lógica de los productos (endpoints 1 a 6)
 @Slf4j
 @Service
 @RequiredArgsConstructor // lombok crea el constructor con todos los atributos final y Spring los inyecta por ahí
@@ -140,6 +140,26 @@ public class ProductoServiceImpl implements ProductoService {
         Producto producto = buscarProductoActivo(id);
         producto.setDisponible(request.disponible());
         return productoMapper.toResponse(producto);
+    }
+
+
+    // endpoint 6 - DELETE /api/v1/productos/{id}
+    // url: http://localhost:8080/api/v1/productos/21
+    //
+    // RN-01: no se borra la fila, solo se pone activo = false.
+    // si la borráramos, los pedidos antiguos que llevan este producto se quedarían sin él
+    // (y la FK de producto_pedido ni siquiera nos dejaría). así deja de salir en la carta
+    // y no se puede pedir, pero los pedidos viejos lo siguen enseñando.
+    // (sin save(), igual que en el 4 y el 5)
+    @Override
+    @Transactional
+    public void darDeBaja(Long id) {
+        log.info("Baja del producto {}", id);
+
+        // 404 si no existe, 422 si ya estaba de baja
+        Producto producto = buscarProductoActivo(id);
+        producto.setActivo(false);
+        log.info("Producto {} dado de baja", id);
     }
 
 

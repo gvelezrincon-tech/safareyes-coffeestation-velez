@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 // línea de pedido: tabla intermedia entre pedido y producto.
-// necesita entidad propia porque, además de las dos FK, guarda la cantidad.
+// necesita entidad propia porque, además de las dos FK, guarda la cantidad y el precio del momento.
 @Entity
 @Table(name = "producto_pedido", schema = "coffestation")
 @Getter@Setter@NoArgsConstructor
@@ -30,5 +32,9 @@ public class ProductoPedido {
 
     @Column(name = "cantidad")
     private Long cantidad;
+
+    // RN-03: precio que tenía el producto cuando se hizo el pedido
+    @Column(name = "precio_unitario")
+    private BigDecimal precioUnitario;
 
 }

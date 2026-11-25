@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 
-// lo que se puede hacer con los productos (endpoints 1 a 5).
+// lo que se puede hacer con los productos (endpoints 1 a 6).
 // el controlador solo ve esta interfaz; el código de verdad está en ProductoServiceImpl
 public interface ProductoService {
 
@@ -27,4 +27,7 @@ public interface ProductoService {
 
     // endpoint 5: marcar un producto como disponible o agotado
     ProductoResponse cambiarDisponibilidad(Long id, DisponibilidadRequest request);
+
+    // endpoint 6: dar de baja un producto (baja lógica, no se borra de la bd)
+    void darDeBaja(Long id);
 }

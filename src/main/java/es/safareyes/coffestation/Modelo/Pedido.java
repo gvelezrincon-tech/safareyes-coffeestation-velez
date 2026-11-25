@@ -33,6 +33,12 @@ public class Pedido {
     @Column (name = "iva")
     private BigDecimal iva;
 
+    // STRING: en la bd se guarda el texto ('ENTREGADO') y no el número de posición del enum,
+    // así si algún día se reordena el enum no se lían los pedidos que ya hay
+    @Enumerated(EnumType.STRING)
+    @Column (name = "estado")
+    private EstadoPedido estado;
+
     // lado con la FK (Pedido → Cliente)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")

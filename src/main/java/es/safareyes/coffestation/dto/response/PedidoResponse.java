@@ -10,6 +10,8 @@ public record PedidoResponse(
         Long id,
         Long numeroTurno,
         LocalDateTime fechaHora,
+        // el enum EstadoPedido sale como texto ("PENDIENTE"); MapStruct lo convierte solo
+        String estado,
         String cliente,
         BigDecimal base,
         BigDecimal iva,

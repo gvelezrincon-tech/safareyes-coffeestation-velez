@@ -295,6 +295,39 @@
               }
             }
           ]
+        },
+        {
+          "name": "6. DELETE /productos/{id}",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Dar de baja (204)",
+              "request": {
+                "method": "DELETE",
+                "url": "http://localhost:8080/api/v1/productos/21"
+              }
+            },
+            {
+              "name": "[RN-01] Ya no sale en la carta (404)",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8080/api/v1/productos/21"
+              }
+            },
+            {
+              "name": "[ERROR 404] No existe",
+              "request": {
+                "method": "DELETE",
+                "url": "http://localhost:8080/api/v1/productos/9999"
+              }
+            },
+            {
+              "name": "[EXTRA] Ya estaba de baja da 422",
+              "request": {
+                "method": "DELETE",
+                "url": "http://localhost:8080/api/v1/productos/12"
+              }
+            }
+          ]
         }
       ]
     },

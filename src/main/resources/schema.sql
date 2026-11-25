@@ -102,21 +102,35 @@ create table "pedido" (
     "fecha_hora" timestamp(0) without time zone not null,
     "base" decimal(10,2) not null,
     "iva" decimal(10,2) not null,
+    "estado" varchar(20) not null default 'PENDIENTE',
 
     "cliente_id" bigint not null,
 
     primary key ("id"),
 
     foreign key ("cliente_id")
-        references "cliente"("id")
+        references "cliente"("id"),
+
+    -- RN-08: estados por los que pasa un pedido
+    check ("estado" in (
+        'PENDIENTE',
+        'EN_PREPARACION',
+        'LISTO',
+        'ENTREGADO',
+        'CANCELADO'
+    ))
 );
 
 create table "producto_pedido" (
     "producto_id" bigint not null,
     "pedido_id" bigint not null,
     "cantidad" bigint not null,
+    -- RN-03: precio del producto en el momento del pedido (si luego cambia, este no se toca)
+    "precio_unitario" decimal(10,2) not null,
 
     primary key ("producto_id", "pedido_id"),
+
+    check ("precio_unitario" >= 0),
 
     foreign key ("producto_id")
         references "producto"("id"),

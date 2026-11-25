@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +26,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.math.BigDecimal;
 import java.net.URI;
 
-// endpoints 1 a 5 de la carta. el controlador solo recibe y devuelve DTOs:
-// ni toca repositorios ni devuelve entidades, todo el trabajo lo hace ProductoService.
+// endpoints 1 a 6 de la carta. el controlador solo recibe y devuelve DTOs:
+// ni toca repositorios ni devuelve entidades, to do el trabajo lo hace ProductoService.
 //
-// roles (se pondrán en la fase 4 con Spring Security; de momento está todo abierto):
-//   GET        -> público
-//   POST, PUT  -> ADMIN
+// Todo: esto me lo apunto que se me olvida xd
+//  roles (los voy a poner con Spring Security; de momento está to do abierto):
+//   GET                -> público
+//   POST, PUT, DELETE  -> ADMIN
 //   PATCH      -> ADMIN, BARISTA
 @Slf4j
 @RestController
@@ -102,5 +104,15 @@ public class ProductoController {
                                                   @Valid @RequestBody DisponibilidadRequest request) {
         log.info("PATCH /productos/{}/disponibilidad", id);
         return productoService.cambiarDisponibilidad(id, request);
+    }
+
+    // 6. DELETE /api/v1/productos/{id}  (ADMIN)
+    // baja lógica (RN-01): el producto se queda en la bd pero deja de salir en la carta.
+    // 204 sin cuerpo si va bien; 404 no existe; 422 ya estaba de baja
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> darDeBaja(@PathVariable Long id) {
+        log.info("DELETE /productos/{}", id);
+        productoService.darDeBaja(id);
+        return ResponseEntity.noContent().build();
     }
 }
