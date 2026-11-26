@@ -1079,6 +1079,84 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Informes",
+      "item": [
+        {
+          "name": "15. GET /informes/ventas-dia",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Ventas de un día (solo ENTREGADO)",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/ventas-dia?fecha=2026-10-03"
+              }
+            },
+            {
+              "name": "[RN-10] Día sin pedidos entregados sale a 0",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/ventas-dia?fecha=2026-01-01"
+              }
+            },
+            {
+              "name": "[ERROR 400] Falta la fecha",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/ventas-dia"
+              }
+            },
+            {
+              "name": "[ERROR 400] Fecha mal escrita",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/ventas-dia?fecha=ayer"
+              }
+            }
+          ]
+        },
+        {
+          "name": "16. GET /informes/productos-top",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Top 5 de octubre (límite por defecto)",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/productos-top?desde=2026-10-01&hasta=2026-10-31"
+              }
+            },
+            {
+              "name": "[PRINCIPAL] Top 3 con límite",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/productos-top?desde=2026-10-01&hasta=2026-10-31&limite=3"
+              }
+            },
+            {
+              "name": "[ERROR 422] Desde después de hasta",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/productos-top?desde=2026-10-31&hasta=2026-10-01"
+              }
+            },
+            {
+              "name": "[ERROR 400] Límite fuera de rango",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/productos-top?desde=2026-10-01&hasta=2026-10-31&limite=0"
+              }
+            },
+            {
+              "name": "[ERROR 400] Falta una fecha",
+              "request": {
+                "method": "GET",
+                "url": "http://localhost:8081/api/v1/informes/productos-top?desde=2026-10-01"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

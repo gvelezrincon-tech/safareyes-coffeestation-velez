@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.LinkedHashMap;
@@ -76,6 +77,24 @@ public class GlobalExceptionHandler {
         return problema;
 
 
+    }
+
+    // 400: un parámetro de la url no pasa sus validaciones (?limite=0 con @Min(1) en el controlador).
+    // igual que el de arriba, en "errores" va cada parámetro que falla con su mensaje
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ProblemDetail manejarValidacionParametros(HandlerMethodValidationException ex) {
+        Map<String, String> errores = new LinkedHashMap<>();
+        ex.getParameterValidationResults().forEach(resultado ->
+                resultado.getResolvableErrors().forEach(error ->
+                        errores.putIfAbsent(resultado.getMethodParameter().getParameterName(),
+                                error.getDefaultMessage())));
+        log.warn("400 - Parámetros no válidos: {}", errores);
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "La petición tiene parámetros no válidos");
+        problema.setTitle("Datos no válidos");
+        problema.setProperty("errores", errores);
+        return problema;
     }
 
     // 400: el cuerpo no es un json válido o un campo viene con un tipo raro ("precio": "abc")

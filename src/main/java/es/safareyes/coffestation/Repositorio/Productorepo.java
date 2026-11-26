@@ -1,6 +1,7 @@
 package es.safareyes.coffestation.Repositorio;
 
 import es.safareyes.coffestation.Modelo.Producto;
+import es.safareyes.coffestation.dto.response.ProductoTopView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -41,17 +42,23 @@ public interface Productorepo extends JpaRepository<Producto, Long>, JpaSpecific
     @EntityGraph(attributePaths = {"alergenos", "categoria"})
     Optional<Producto> findWithAlergenosById(Long id);
 
-    // GET /api/v1/informes/productos-top?desde=&hasta=&limite=
-    // productos más vendidos entre dos fechas
-    @Query(value = "select pr.nombre, sum(pp.cantidad) from coffestation.producto_pedido pp " +
+    // GET /api/v1/informes/productos-top?desde=&hasta=&limite= (endpoint 16, consulta Q3 nativa + Q5 interfaz)
+    // ranking de productos más vendidos entre dos fechas, solo de pedidos ENTREGADO (RN-10).
+    // el importe sale del precio guardado en cada línea (RN-03), no del precio de hoy.
+    // sum de un bigint en postgres da numeric, por eso el cast a bigint (para que encaje en un Long).
+    // los "as productoId", "as producto"... tienen que llamarse igual que los getters de ProductoTopView
+    @Query(value = "select pr.id as productoId, pr.nombre as producto, " +
+            "cast(sum(pp.cantidad) as bigint) as unidades, " +
+            "sum(pp.cantidad * pp.precio_unitario) as importe " +
+            "from coffestation.producto_pedido pp " +
             "join coffestation.producto pr on pr.id = pp.producto_id " +
             "join coffestation.pedido pe on pe.id = pp.pedido_id " +
-            "where pe.fecha_hora between :desde and :hasta " +
-            "group by pr.nombre order by sum(pp.cantidad) desc limit :limite", nativeQuery = true)
-    // Object[]: [0] = nombre del producto, [1] = unidades vendidas
-    List<Object[]> obtenerProductosTop(@Param("desde") LocalDateTime desde,
-                                       @Param("hasta") LocalDateTime hasta,
-                                       @Param("limite") int limite);
+            "where pe.estado = 'ENTREGADO' and pe.fecha_hora between :desde and :hasta " +
+            "group by pr.id, pr.nombre " +
+            "order by unidades desc, importe desc limit :limite", nativeQuery = true)
+    List<ProductoTopView> obtenerProductosTop(@Param("desde") LocalDateTime desde,
+                                              @Param("hasta") LocalDateTime hasta,
+                                              @Param("limite") int limite);
 
     // EXTRA: productos agotados
     List<Producto> findByDisponibleFalse();

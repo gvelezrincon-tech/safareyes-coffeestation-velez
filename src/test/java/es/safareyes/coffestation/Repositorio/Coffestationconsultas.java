@@ -12,6 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import es.safareyes.coffestation.dto.response.CategoriaResponse;
+import es.safareyes.coffestation.dto.response.ProductoTopView;
+import es.safareyes.coffestation.dto.response.VentasDiaDto;
+import es.safareyes.coffestation.dto.response.VentasHoraView;
+import es.safareyes.coffestation.Modelo.EstadoPedido;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,18 +124,19 @@ public class Coffestationconsultas {
     void buscarVentasDelDia() {
 
         LocalDate dia = LocalDate.of(2026, 10, 1);
-        // el Object[] es el resumen del día: [0] = nº de pedidos, [1] = total, [2] = base, [3] = iva
-        Object[] ventas = pedidorepo.obtenerVentasDia(dia.atStartOfDay(), dia.atTime(23, 59, 59)).get(0);
+        // el "select new" ya devuelve el resumen del día hecho (solo pedidos ENTREGADO, RN-10)
+        VentasDiaDto ventas = pedidorepo.obtenerVentasDia(EstadoPedido.ENTREGADO,
+                dia.atStartOfDay(), dia.atTime(23, 59, 59));
 
-        Long numeroPedidos = (Long) ventas[0];
-        BigDecimal total = (BigDecimal) ventas[1];
-        BigDecimal base = (BigDecimal) ventas[2];
-        BigDecimal iva = (BigDecimal) ventas[3];
+        System.out.println("Pedidos: " + ventas.numeroPedidos());
+        System.out.println("Total: " + ventas.total());
+        System.out.println("Base: " + ventas.base());
+        System.out.println("IVA: " + ventas.iva());
 
-        System.out.println("Pedidos: " + numeroPedidos);
-        System.out.println("Total: " + total);
-        System.out.println("Base: " + base);
-        System.out.println("IVA: " + iva);
+        // y el desglose por horas (consulta nativa con extract)
+        for (VentasHoraView hora : pedidorepo.obtenerVentasPorHora(dia.atStartOfDay(), dia.atTime(23, 59, 59))) {
+            System.out.println("Hora " + hora.getHora() + ": " + hora.getPedidos() + " pedidos, " + hora.getTotal() + " €");
+        }
     }
 
     // GET /api/v1/informes/productos-top?desde=&hasta=&limite=
@@ -139,16 +144,15 @@ public class Coffestationconsultas {
     void buscarProductosMasVendidos() {
 
 
-        // cada Object[] es un producto: [0] = nombre, [1] = unidades vendidas
-        List<Object[]> top = productorepo.obtenerProductosTop(
+        // cada fila es un ProductoTopView (proyección por interfaz)
+        List<ProductoTopView> top = productorepo.obtenerProductosTop(
                 LocalDateTime.of(2026, 10, 1, 0, 0),
                 LocalDateTime.of(2026, 10, 3, 23, 59),
                 5);
 
-        for (Object[] fila : top) {
-            String nombreProducto = (String) fila[0];
-            Number unidadesVendidas = (Number) fila[1];
-            System.out.println("Producto: " + nombreProducto + " - Unidades: " + unidadesVendidas);
+        for (ProductoTopView fila : top) {
+            System.out.println("Producto: " + fila.getProducto() + " - Unidades: " + fila.getUnidades()
+                    + " - Importe: " + fila.getImporte());
         }
     }
 
