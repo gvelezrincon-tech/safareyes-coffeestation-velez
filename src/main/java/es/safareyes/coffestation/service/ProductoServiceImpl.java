@@ -42,7 +42,7 @@ public class ProductoServiceImpl implements ProductoService {
     // endpoint 1 - GET /api/v1/productos
 
     //vaya chorizo de url todo: mirar como hacerla mas pequeña
-    // url: http://localhost:8080/api/v1/productos?categoriaId=1&texto=café&precioMax=4&disponible=true&sinAlergenoId=7&page=0&size=10
+    // url: http://localhost:8081/api/v1/productos?categoriaId=1&texto=café&precioMax=4&disponible=true&sinAlergenoId=7&page=0&size=10
 
     // @Transactional(readOnly = true):
     // aquí no se guarda nada, pero los alérgenos son LAZY (no se cargan hasta que alguien los pide).
@@ -66,7 +66,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     // endpoint 2 - GET /api/v1/productos/{id}
-    // url: http://localhost:8080/api/v1/productos/9
+    // url: http://localhost:8081/api/v1/productos/9
     @Override
     @Transactional(readOnly = true)
     public ProductoResponse obtenerPorId(Long id) {
@@ -83,7 +83,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     // endpoint 3 - POST /api/v1/productos
-    // url: http://localhost:8080/api/v1/productos
+    // url: http://localhost:8081/api/v1/productos
     @Override
     @Transactional
     public ProductoResponse crear(ProductoRequest request) {
@@ -104,7 +104,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     // endpoint 4 - PUT /api/v1/productos/{id}
-    // url: http://localhost:8080/api/v1/productos/21
+    // url: http://localhost:8081/api/v1/productos/21
     //
     // por qué no hay save():
     // el producto lo hemos sacado de la bd dentro de la transacción, así que Hibernate lo está
@@ -128,7 +128,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     // endpoint 5 - PATCH /api/v1/productos/{id}/disponibilidad
-    // url: http://localhost:8080/api/v1/productos/21/disponibilidad
+    // url: http://localhost:8081/api/v1/productos/21/disponibilidad
     // (tampoco hace falta save(), por lo mismo que en el endpoint 4)
 
 
@@ -144,7 +144,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     // endpoint 6 - DELETE /api/v1/productos/{id}
-    // url: http://localhost:8080/api/v1/productos/21
+    // url: http://localhost:8081/api/v1/productos/21
     //
     // RN-01: no se borra la fila, solo se pone activo = false.
     //tengo que mirar si funciona bien ya o no

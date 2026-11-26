@@ -2,6 +2,7 @@ package es.safareyes.coffestation.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -22,7 +23,9 @@ public record PedidoRequest(
         @Size(max = 20, message = "El código de cupón no puede pasar de 20 caracteres")
         String codigoCupon,
 
-        @Size(min = 9, max = 9, message = "El DNI tiene que tener 9 caracteres (8 números y una letra)")
+        // opcional: DNI del socio de FitZone. 8 números y una letra (12345678Z).
+        // TODO fase 5: de momento se valida el formato pero no se usa (falta conectar con FitZone)
+        @Pattern(regexp = "\\d{8}[A-Za-z]", message = "El DNI tiene que tener 8 números y una letra (p. ej. 12345678Z)")
         String dniSocio
 ) {
 }

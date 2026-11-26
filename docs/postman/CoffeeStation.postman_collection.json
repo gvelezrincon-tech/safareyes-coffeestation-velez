@@ -14,56 +14,56 @@
               "name": "[PRINCIPAL] Carta",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?page=0&size=10"
+                "url": "http://localhost:8081/api/v1/productos?page=0&size=10"
               }
             },
             {
               "name": "[REQUISITOS-02] Por categoría",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?categoriaId=1"
+                "url": "http://localhost:8081/api/v1/productos?categoriaId=1"
               }
             },
             {
               "name": "[REQUISITOS-02] Por texto",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?texto=café"
+                "url": "http://localhost:8081/api/v1/productos?texto=café"
               }
             },
             {
               "name": "[REQUISITOS-02] Precio máximo",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?precioMax=1.50"
+                "url": "http://localhost:8081/api/v1/productos?precioMax=1.50"
               }
             },
             {
               "name": "[REQUISITOS-02] Solo agotados",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?disponible=false"
+                "url": "http://localhost:8081/api/v1/productos?disponible=false"
               }
             },
             {
               "name": "[REQUISITOS-02] Sin alérgeno (lácteos)",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?sinAlergenoId=7"
+                "url": "http://localhost:8081/api/v1/productos?sinAlergenoId=7"
               }
             },
             {
               "name": "[REQUISITOS-02] Filtros combinados",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?categoriaId=4&sinAlergenoId=3&precioMax=4&disponible=true"
+                "url": "http://localhost:8081/api/v1/productos?categoriaId=4&sinAlergenoId=3&precioMax=4&disponible=true"
               }
             },
             {
               "name": "[RN-01] Producto de baja no sale",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos?texto=ensaimada"
+                "url": "http://localhost:8081/api/v1/productos?texto=ensaimada"
               }
             }
           ]
@@ -75,21 +75,21 @@
               "name": "[PRINCIPAL] Detalle con alérgenos",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos/9"
+                "url": "http://localhost:8081/api/v1/productos/9"
               }
             },
             {
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos/9999"
+                "url": "http://localhost:8081/api/v1/productos/9999"
               }
             },
             {
               "name": "[RN-01] Producto de baja da 404",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos/12"
+                "url": "http://localhost:8081/api/v1/productos/12"
               }
             }
           ]
@@ -101,7 +101,7 @@
               "name": "[PRINCIPAL] Crear producto (201 + Location)",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/productos",
+                "url": "http://localhost:8081/api/v1/productos",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -118,7 +118,7 @@
               "name": "[ERROR 400] Sin nombre ni precio",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/productos",
+                "url": "http://localhost:8081/api/v1/productos",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -135,7 +135,7 @@
               "name": "[ERROR 404] Categoría no existe",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/productos",
+                "url": "http://localhost:8081/api/v1/productos",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -152,7 +152,7 @@
               "name": "[ERROR 404] Alérgeno no existe",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/productos",
+                "url": "http://localhost:8081/api/v1/productos",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -174,7 +174,7 @@
               "name": "[PRINCIPAL] Modificar producto",
               "request": {
                 "method": "PUT",
-                "url": "http://localhost:8080/api/v1/productos/21",
+                "url": "http://localhost:8081/api/v1/productos/21",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -191,7 +191,7 @@
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "PUT",
-                "url": "http://localhost:8080/api/v1/productos/9999",
+                "url": "http://localhost:8081/api/v1/productos/9999",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -208,7 +208,7 @@
               "name": "[EXTRA] Producto de baja da 422",
               "request": {
                 "method": "PUT",
-                "url": "http://localhost:8080/api/v1/productos/12",
+                "url": "http://localhost:8081/api/v1/productos/12",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -230,7 +230,7 @@
               "name": "[PRINCIPAL] Marcar agotado",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/productos/21/disponibilidad",
+                "url": "http://localhost:8081/api/v1/productos/21/disponibilidad",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -247,7 +247,7 @@
               "name": "[PRINCIPAL] Reponer",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/productos/21/disponibilidad",
+                "url": "http://localhost:8081/api/v1/productos/21/disponibilidad",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -264,7 +264,7 @@
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/productos/9999/disponibilidad",
+                "url": "http://localhost:8081/api/v1/productos/9999/disponibilidad",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -281,7 +281,7 @@
               "name": "[EXTRA] Producto de baja da 422",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/productos/12/disponibilidad",
+                "url": "http://localhost:8081/api/v1/productos/12/disponibilidad",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -303,28 +303,28 @@
               "name": "[PRINCIPAL] Dar de baja (204)",
               "request": {
                 "method": "DELETE",
-                "url": "http://localhost:8080/api/v1/productos/21"
+                "url": "http://localhost:8081/api/v1/productos/21"
               }
             },
             {
               "name": "[RN-01] Ya no sale en la carta (404)",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/productos/21"
+                "url": "http://localhost:8081/api/v1/productos/21"
               }
             },
             {
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "DELETE",
-                "url": "http://localhost:8080/api/v1/productos/9999"
+                "url": "http://localhost:8081/api/v1/productos/9999"
               }
             },
             {
               "name": "[EXTRA] Ya estaba de baja da 422",
               "request": {
                 "method": "DELETE",
-                "url": "http://localhost:8080/api/v1/productos/12"
+                "url": "http://localhost:8081/api/v1/productos/12"
               }
             }
           ]
@@ -341,7 +341,7 @@
               "name": "[PRINCIPAL] Categorías con nº de productos activos",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/categorias"
+                "url": "http://localhost:8081/api/v1/categorias"
               }
             }
           ]
@@ -352,27 +352,236 @@
       "name": "Pedidos",
       "item": [
         {
+          "name": "9. POST /pedidos",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Pedido de barra sin cliente (201 + Location)",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 2\n    },\n    {\n      \"productoId\": 13,\n      \"cantidad\": 1\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] Pedido de un cliente con cupón",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clienteId\": 3,\n  \"lineas\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 2\n    },\n    {\n      \"productoId\": 14,\n      \"cantidad\": 1\n    }\n  ],\n  \"codigoCupon\": \"OTONO15\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-04] El mismo producto en dos líneas se agrupa",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 1\n    },\n    {\n      \"productoId\": 2,\n      \"cantidad\": 2\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-04] Más de 20 unidades al agrupar da 422",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 15\n    },\n    {\n      \"productoId\": 2,\n      \"cantidad\": 10\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-02] Producto agotado da 422",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 5,\n      \"cantidad\": 1\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-01] Producto de baja da 422",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 12,\n      \"cantidad\": 1\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Cupón caducado da 422",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clienteId\": 1,\n  \"lineas\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 1\n    }\n  ],\n  \"codigoCupon\": \"VERANO20\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[RN-06] Cupón personal de otro cliente da 422",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clienteId\": 2,\n  \"lineas\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 1\n    }\n  ],\n  \"codigoCupon\": \"OTONO15\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Sin líneas",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": []\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Cantidad fuera de rango y DNI mal escrito",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 0\n    }\n  ],\n  \"dniSocio\": \"123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 404] Producto no existe",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lineas\": [\n    {\n      \"productoId\": 9999,\n      \"cantidad\": 1\n    }\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 404] Cliente no existe",
+              "request": {
+                "method": "POST",
+                "url": "http://localhost:8081/api/v1/pedidos",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clienteId\": 9999,\n  \"lineas\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 1\n    }\n  ]\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
           "name": "10. GET /pedidos/{id}",
           "item": [
             {
               "name": "[PRINCIPAL] Detalle con líneas",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos/10"
+                "url": "http://localhost:8081/api/v1/pedidos/10"
               }
             },
             {
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos/9999"
+                "url": "http://localhost:8081/api/v1/pedidos/9999"
               }
             },
             {
               "name": "[ERROR 400] Id no numérico",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos/abc"
+                "url": "http://localhost:8081/api/v1/pedidos/abc"
               }
             }
           ]
@@ -384,42 +593,42 @@
               "name": "[PRINCIPAL] Listado paginado",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?page=0&size=10"
+                "url": "http://localhost:8081/api/v1/pedidos?page=0&size=10"
               }
             },
             {
               "name": "[REQUISITOS-02] Por fecha",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?fecha=2026-10-03"
+                "url": "http://localhost:8081/api/v1/pedidos?fecha=2026-10-03"
               }
             },
             {
               "name": "[REQUISITOS-02] Por estado",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?estado=PENDIENTE"
+                "url": "http://localhost:8081/api/v1/pedidos?estado=PENDIENTE"
               }
             },
             {
               "name": "[REQUISITOS-02] Estado y fecha",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?estado=PENDIENTE&fecha=2026-10-03"
+                "url": "http://localhost:8081/api/v1/pedidos?estado=PENDIENTE&fecha=2026-10-03"
               }
             },
             {
               "name": "[ERROR 400] Fecha mal escrita",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?fecha=ayer"
+                "url": "http://localhost:8081/api/v1/pedidos?fecha=ayer"
               }
             },
             {
               "name": "[ERROR 400] Estado que no existe",
               "request": {
                 "method": "GET",
-                "url": "http://localhost:8080/api/v1/pedidos?estado=frio"
+                "url": "http://localhost:8081/api/v1/pedidos?estado=frio"
               }
             }
           ]
@@ -431,7 +640,7 @@
               "name": "[PRINCIPAL] PENDIENTE a EN_PREPARACION",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/12/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -448,7 +657,7 @@
               "name": "[PRINCIPAL] EN_PREPARACION a LISTO",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/12/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -465,7 +674,7 @@
               "name": "[PRINCIPAL] LISTO a ENTREGADO",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/12/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -482,7 +691,7 @@
               "name": "[RN-08] Cancelar un pedido PENDIENTE",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/11/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/11/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -499,7 +708,7 @@
               "name": "[RN-08] Salto no permitido da 422",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/12/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -516,7 +725,7 @@
               "name": "[ERROR 400] Estado que no existe",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/12/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/12/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -533,7 +742,7 @@
               "name": "[ERROR 404] No existe",
               "request": {
                 "method": "PATCH",
-                "url": "http://localhost:8080/api/v1/pedidos/9999/estado",
+                "url": "http://localhost:8081/api/v1/pedidos/9999/estado",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -560,7 +769,7 @@
               "name": "[PRINCIPAL] Crear cupón para todos (201 + Location)",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -577,7 +786,7 @@
               "name": "[PRINCIPAL] Crear cupón personal de un cliente",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -594,7 +803,7 @@
               "name": "[ERROR 400] Faltan datos y tipo no válido",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -611,7 +820,7 @@
               "name": "[ERROR 400] Código con formato no válido (validador propio)",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -628,7 +837,7 @@
               "name": "[ERROR 409] Código repetido",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -645,7 +854,7 @@
               "name": "[ERROR 404] Cliente no existe",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -662,7 +871,7 @@
               "name": "[ERROR 422] Fecha de fin antes que la de inicio",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -679,7 +888,7 @@
               "name": "[ERROR 422] Porcentaje de más del 100",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones",
+                "url": "http://localhost:8081/api/v1/cupones",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -701,7 +910,7 @@
               "name": "[PRINCIPAL] Cupón de porcentaje válido",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -718,7 +927,7 @@
               "name": "[PRINCIPAL] Cupón de importe fijo válido",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -735,7 +944,7 @@
               "name": "[RN-06] No existe",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -752,7 +961,7 @@
               "name": "[RN-06] Caducado",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -769,7 +978,7 @@
               "name": "[RN-06] Todavía no ha empezado",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -786,7 +995,7 @@
               "name": "[RN-06] Sin usos disponibles",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -803,7 +1012,7 @@
               "name": "[RN-06] Subtotal igual al importe mínimo",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -820,7 +1029,7 @@
               "name": "[RN-06] Cupón personal de otro cliente",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -837,7 +1046,7 @@
               "name": "[RN-07] Descuento mayor que el subtotal",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -854,7 +1063,7 @@
               "name": "[ERROR 400] Faltan datos o están mal",
               "request": {
                 "method": "POST",
-                "url": "http://localhost:8080/api/v1/cupones/validar",
+                "url": "http://localhost:8081/api/v1/cupones/validar",
                 "header": [
                   {
                     "key": "Content-Type",

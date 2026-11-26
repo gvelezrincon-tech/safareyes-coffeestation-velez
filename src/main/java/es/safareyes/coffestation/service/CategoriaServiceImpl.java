@@ -24,7 +24,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 
     // endpoint 7 - GET /api/v1/categorias
-    // url: http://localhost:8080/api/v1/categorias
+    // url: http://localhost:8081/api/v1/categorias
     // aquí no hace falta mapper: la consulta ya devuelve el dto hecho (select new)
     @Override
     @Transactional(readOnly = true)
@@ -35,7 +35,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 
     // endpoint 8 - PATCH /api/v1/categorias/{id}/disponibilidad
-    // url: http://localhost:8080/api/v1/categorias/3/disponibilidad
+    // url: http://localhost:8081/api/v1/categorias/3/disponibilidad
     //
     // RF-03: el barista marca toda la bollería como agotada de una vez.
     // se cambia la categoría y, con un solo update (Q4), todos sus productos activos.

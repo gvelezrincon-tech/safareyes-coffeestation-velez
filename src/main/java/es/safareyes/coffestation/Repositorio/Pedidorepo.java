@@ -48,6 +48,10 @@ public interface Pedidorepo extends JpaRepository<Pedido, Long> {
     Page<Pedido> findByEstadoAndFechaHoraBetween(EstadoPedido estado, LocalDateTime desde,
                                                  LocalDateTime hasta, Pageable pageable);
 
+    // POST /api/v1/pedidos (endpoint 9, RN-09)
+    // cuántos pedidos se han creado entre dos momentos. con el día de hoy da el número de turno - 1
+    long countByFechaHoraBetween(LocalDateTime desde, LocalDateTime hasta);
+
     // GET /api/v1/informes/ventas-dia?fecha=
     // ventas entre dos momentos (devuelve una sola fila)
     @Query("select count(p), sum(p.base + p.iva), sum(p.base), sum(p.iva) " +

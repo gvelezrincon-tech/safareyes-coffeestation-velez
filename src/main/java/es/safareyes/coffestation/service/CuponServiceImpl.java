@@ -37,7 +37,7 @@ public class CuponServiceImpl implements CuponService {
 
 
     // endpoint 13 - POST /api/v1/cupones
-    // url: http://localhost:8080/api/v1/cupones
+    // url: http://localhost:8081/api/v1/cupones
     //
     // el dto ya ha comprobado lo "de formato" (campos obligatorios, valor > 0, formato del código...).
     // aquí van las comprobaciones que necesitan pensar un poco o mirar la bd:
@@ -83,72 +83,21 @@ public class CuponServiceImpl implements CuponService {
 
 
     // endpoint 14 - POST /api/v1/cupones/validar
-    // url: http://localhost:8080/api/v1/cupones/validar   cuerpo: { "codigo": "BIENVENIDA10", "subtotal": 12.50 }
+    // url: http://localhost:8081/api/v1/cupones/validar   cuerpo: { "codigo": "BIENVENIDA10", "subtotal": 12.50 }
     //
     // aquí un cupón que no vale NO es un error: la pregunta "¿vale?" se responde siempre con 200,
     // y en la respuesta va valido = true/false y un mensaje diciendo por qué.
-    //
-    // RN-06: un cupón vale si...
-    //   1. existe
-    //   2. está activo
-    //   3. hoy está dentro de sus fechas
-    //   4. no ha llegado a sus usos máximos
-    //   5. el subtotal supera su importe mínimo
-    //   6. si es personal, el email es el del cliente
-    // se comprueban en ese orden y en cuanto una falla se responde con el motivo.
-    // si pasa las 6, se calcula el descuento
+    // las comprobaciones de la RN-06 están en motivoNoValido (las comparte con el endpoint 9)
     @Override
     @Transactional(readOnly = true)
     public ValidarCuponResponse validar(ValidarCuponRequest request) {
         String codigo = request.codigo().trim().toUpperCase();
         log.info("Validar cupón {} para un subtotal de {}", codigo, request.subtotal());
 
-        // 1. existe
         Cupones cupon = cuponesrepo.findByCodigoIgnoreCase(codigo).orElse(null);
-        if (cupon == null) {
-            return noValido("No existe ningún cupón con el código " + codigo);
-        }
-
-        // 2. está activo
-        if (!cupon.getActivo()) {
-            return noValido("El cupón " + codigo + " está desactivado");
-        }
-
-        // 3. hoy está dentro de sus fechas (ni antes de empezar ni después de acabar)
-        LocalDateTime ahora = LocalDateTime.now();
-        if (ahora.isBefore(cupon.getFechaInicio())) {
-            return noValido("El cupón " + codigo + " todavía no ha empezado (empieza el "
-                    + cupon.getFechaInicio().toLocalDate() + ")");
-        }
-        if (ahora.isAfter(cupon.getFechaFin())) {
-            return noValido("El cupón " + codigo + " está caducado (acabó el "
-                    + cupon.getFechaFin().toLocalDate() + ")");
-        }
-
-        // 4. no ha llegado a sus usos máximos.
-        // los usos son sus filas en pedido_cupones, pero sin contar los pedidos CANCELADO
-        // (RN-08: cancelar un pedido le devuelve el uso al cupón)
-        long usos = pedidoCuponesrepo.countByCuponIdAndPedidoEstadoNot(cupon.getId(), EstadoPedido.CANCELADO);
-        if (usos >= cupon.getMaxUsos()) {
-            return noValido("El cupón " + codigo + " ya ha llegado a su máximo de usos ("
-                    + cupon.getMaxUsos() + ")");
-        }
-
-        // 5. el subtotal SUPERA el importe mínimo (si es igual, no vale).
-        // importeMinimo es opcional: si es null, el cupón vale para cualquier importe
-        if (cupon.getImporteMinimo() != null && request.subtotal().compareTo(cupon.getImporteMinimo()) <= 0) {
-            return noValido("El cupón " + codigo + " solo vale para pedidos de más de "
-                    + cupon.getImporteMinimo() + " €");
-        }
-
-        // 6. si el cupón es personal, solo lo puede usar su cliente (se comparan los emails).
-        // de momento el email llega en la petición; en la fase 4 un CLIENTE lo sacará de su token
-        // ojo: cupon.getCliente() es LAZY, pero estamos dentro de la transacción y se carga sin problema
-        if (cupon.getCliente() != null) {
-            String emailCupon = cupon.getCliente().getEmail();
-            if (request.email() == null || !emailCupon.equalsIgnoreCase(request.email().trim())) {
-                return noValido("El cupón " + codigo + " es personal y no pertenece a este cliente");
-            }
+        String motivo = motivoNoValido(cupon, codigo, request.subtotal(), request.email());
+        if (motivo != null) {
+            return noValido(motivo);
         }
 
         // ha pasado todo: el cupón vale. calculamos cuánto descuenta
@@ -157,18 +106,99 @@ public class CuponServiceImpl implements CuponService {
         return new ValidarCuponResponse(true, "Cupón válido", descuento);
     }
 
+
+    // endpoint 9 - POST /api/v1/pedidos con "codigoCupon"
+    // mismas comprobaciones que el endpoint 14, pero aquí un cupón que no vale sí es un error:
+    // el pedido no se crea y sale un 422 con el motivo (el barista avisa al cliente y lo vuelve a pedir)
+    // sin readOnly: se llama desde dentro de la transacción de crear el pedido, que sí escribe
+    @Override
+    @Transactional
+    public Cupones buscarCuponAplicable(String codigo, BigDecimal subtotal, String email) {
+        String codigoLimpio = codigo.trim().toUpperCase();
+        log.info("Cupón {} en un pedido de {} €", codigoLimpio, subtotal);
+
+        Cupones cupon = cuponesrepo.findByCodigoIgnoreCase(codigoLimpio).orElse(null);
+        String motivo = motivoNoValido(cupon, codigoLimpio, subtotal, email);
+        if (motivo != null) {
+            throw new ReglaNegocioException(motivo);
+        }
+        return cupon;
+    }
+
+
     // cuánto descuenta un cupón sobre un subtotal:
     //   PORCENTAJE   -> subtotal * valor / 100   (10 % de 12,50 = 1,25)
     //   IMPORTE_FIJO -> el valor tal cual        (1 € = 1,00)
     // redondeado a 2 decimales (HALF_UP = el redondeo de toda la vida: 0,125 -> 0,13).
     // nunca más que el subtotal: un cupón de 5 € en un pedido de 3 € descuenta 3 €,
     // así el total no se queda en negativo (RN-07).
-    // TODO endpoint 9: al crear el pedido se puede reutilizar este cálculo
-    private BigDecimal calcularDescuento(Cupones cupon, BigDecimal subtotal) {
+    // lo usan el endpoint 14 y el 9 (al crear el pedido)
+    @Override
+    public BigDecimal calcularDescuento(Cupones cupon, BigDecimal subtotal) {
         BigDecimal descuento = (cupon.getTipo() == TipoCupon.PORCENTAJE)
                 ? subtotal.multiply(cupon.getValor()).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP)
                 : cupon.getValor().setScale(2, RoundingMode.HALF_UP);
         return descuento.min(subtotal);
+    }
+
+
+    // RN-06: un cupón vale si...
+    //   1. existe
+    //   2. está activo
+    //   3. hoy está dentro de sus fechas
+    //   4. no ha llegado a sus usos máximos
+    //   5. el subtotal supera su importe mínimo
+    //   6. si es personal, el email es el del cliente
+    // se comprueban en ese orden y en cuanto una falla se devuelve el motivo.
+    // si pasa las 6, devuelve null (= el cupón vale)
+    private String motivoNoValido(Cupones cupon, String codigo, BigDecimal subtotal, String email) {
+        // 1. existe
+        if (cupon == null) {
+            return "No existe ningún cupón con el código " + codigo;
+        }
+
+        // 2. está activo
+        if (!cupon.getActivo()) {
+            return "El cupón " + codigo + " está desactivado";
+        }
+
+        // 3. hoy está dentro de sus fechas (ni antes de empezar ni después de acabar)
+        LocalDateTime ahora = LocalDateTime.now();
+        if (ahora.isBefore(cupon.getFechaInicio())) {
+            return "El cupón " + codigo + " todavía no ha empezado (empieza el "
+                    + cupon.getFechaInicio().toLocalDate() + ")";
+        }
+        if (ahora.isAfter(cupon.getFechaFin())) {
+            return "El cupón " + codigo + " está caducado (acabó el "
+                    + cupon.getFechaFin().toLocalDate() + ")";
+        }
+
+        // 4. no ha llegado a sus usos máximos.
+        // los usos son sus filas en pedido_cupones, pero sin contar los pedidos CANCELADO
+        // (RN-08: cancelar un pedido le devuelve el uso al cupón)
+        long usos = pedidoCuponesrepo.countByCuponIdAndPedidoEstadoNot(cupon.getId(), EstadoPedido.CANCELADO);
+        if (usos >= cupon.getMaxUsos()) {
+            return "El cupón " + codigo + " ya ha llegado a su máximo de usos (" + cupon.getMaxUsos() + ")";
+        }
+
+        // 5. el subtotal SUPERA el importe mínimo (si es igual, no vale).
+        // importeMinimo es opcional: si es null, el cupón vale para cualquier importe
+        if (cupon.getImporteMinimo() != null && subtotal.compareTo(cupon.getImporteMinimo()) <= 0) {
+            return "El cupón " + codigo + " solo vale para pedidos de más de " + cupon.getImporteMinimo() + " €";
+        }
+
+        // 6. si el cupón es personal, solo lo puede usar su cliente (se comparan los emails).
+        // en el 14 el email llega en la petición y en el 9 es el del cliente del pedido.
+        // en la fase 4 un CLIENTE lo sacará de su token
+        // ojo: cupon.getCliente() es LAZY, pero estamos dentro de la transacción y se carga sin problema
+        if (cupon.getCliente() != null) {
+            String emailCupon = cupon.getCliente().getEmail();
+            if (email == null || !emailCupon.equalsIgnoreCase(email.trim())) {
+                return "El cupón " + codigo + " es personal y no pertenece a este cliente";
+            }
+        }
+
+        return null;
     }
 
     // respuesta de "este cupón no vale": sin descuento y con el motivo

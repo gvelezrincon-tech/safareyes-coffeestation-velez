@@ -80,7 +80,7 @@ public class ProductoController {
         ProductoResponse creado = productoService.crear(request);
 
         // montamos la url del producto nuevo cogiendo la de esta petición y añadiendo el id:
-        // http://localhost:8080/api/v1/productos  ->  http://localhost:8080/api/v1/productos/21
+        // http://localhost:8081/api/v1/productos  ->  http://localhost:8081/api/v1/productos/21
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(creado.id())

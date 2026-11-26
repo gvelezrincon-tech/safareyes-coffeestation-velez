@@ -110,7 +110,8 @@ create table "pedido" (
     "iva" decimal(10,2) not null,
     "estado" varchar(20) not null default 'PENDIENTE',
 
-    "cliente_id" bigint not null,
+    -- opcional: un pedido de barra puede no tener cliente registrado
+    "cliente_id" bigint,
 
     primary key ("id"),
 

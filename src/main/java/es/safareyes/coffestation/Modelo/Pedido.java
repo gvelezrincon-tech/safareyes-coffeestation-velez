@@ -45,12 +45,14 @@ public class Pedido {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    // cascade PERSIST: al guardar un pedido nuevo (endpoint 9) se guardan también sus líneas
+    // y su cupón, sin tener que hacer un save() de cada cosa
     // lado inverso (Pedido → sus líneas en ProductoPedido)
-    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<ProductoPedido> lineas = new HashSet<>();
 
     // lado inverso (Pedido → sus cupones en PedidoCupones)
-    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<PedidoCupones> cupones = new HashSet<>();
 
     // lado inverso (Pedido → sus Descuentos)
