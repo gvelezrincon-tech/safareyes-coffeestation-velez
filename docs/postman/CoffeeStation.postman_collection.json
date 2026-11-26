@@ -345,6 +345,79 @@
               }
             }
           ]
+        },
+        {
+          "name": "8. PATCH /categorias/{id}/disponibilidad",
+          "item": [
+            {
+              "name": "[PRINCIPAL] Agotar toda la bollería",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8081/api/v1/categorias/3/disponibilidad",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"disponible\": false\n}"
+                }
+              }
+            },
+            {
+              "name": "[PRINCIPAL] Reponer toda la bollería",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8081/api/v1/categorias/3/disponibilidad",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"disponible\": true\n}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 400] Falta \"disponible\"",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8081/api/v1/categorias/3/disponibilidad",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "[ERROR 404] No existe",
+              "request": {
+                "method": "PATCH",
+                "url": "http://localhost:8081/api/v1/categorias/9999/disponibilidad",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"disponible\": false\n}"
+                }
+              }
+            }
+          ]
         }
       ]
     },
